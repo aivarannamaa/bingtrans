@@ -1,7 +1,8 @@
 """
 Interface to Microsoft Translator API
 """
-import urllib
+import urllib.parse
+import urllib.request
 import codecs
 import json
 
@@ -15,14 +16,14 @@ def _unicode_urlencode(params):
     """
     if isinstance(params, dict):
         params = params.items()
-    return urllib.urlencode([(k, isinstance(v, unicode) and v.encode('utf-8') or v) for k, v in params])
+    return urllib.parse.urlencode([(k, v.encode('utf-8') or v) for k, v in params])
 
 def _run_query(args):
 	"""
 	takes arguments and optional language argument and runs query on server
 	"""
 	data = _unicode_urlencode(args)
-	sock = urllib.urlopen(api_url + '?' + data)
+	sock = urllib.request.urlopen(api_url + '?' + data)
 	result = sock.read()
 	if result.startswith(codecs.BOM_UTF8):
 		result = result.lstrip(codecs.BOM_UTF8).decode('utf-8')
